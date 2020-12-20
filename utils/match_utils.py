@@ -2,7 +2,8 @@ import json
 
 skill_ids = json.load(open("data/ability_ids.json"))
 skill_names = {v: k for (k, v) in skill_ids.items()}
-heroes = json.load(open("data/heroes.json"))
+heroes_data = json.load(open("data/heroes.json"))
+skills_data = json.load(open("data/abilities.json"))
 
 map_skills = {
     "tiny_toss_tree": skill_names["tiny_tree_grab"],
@@ -41,7 +42,7 @@ def get_skill_name(skill_id):
 
 def get_hero_name(hero_id):
     str_hero = str(hero_id)
-    return heroes[str_hero]["name"].replace("npc_dota_hero_", "")
+    return heroes_data[str_hero]["name"].replace("npc_dota_hero_", "")
 
 
 def get_skill_heroes(matches):
@@ -107,8 +108,8 @@ def enrich_match(match, valid_skill_ids):
         hero_id = str(player["hero_id"])
         hero_name = None
 
-        if hero_id in heroes:
-            hero = heroes[hero_id]
+        if hero_id in heroes_data:
+            hero = heroes_data[hero_id]
             hero_name = hero["name"].replace('npc_dota_hero_', "")
             player["hero_name"] = hero_name
         else:
@@ -216,3 +217,29 @@ def set_identifiers(uniques, primes):
         unique["ids"] = list(unique["ids"])
         unique["prime"] = primes[i]
         unique["index"] = i
+
+
+def add_data(unique, data):
+    unique_data = {}
+
+    for k, v in data.items():
+        unique_data[k.lower()] = v
+
+    unique["data"] = unique_data
+
+
+def enrich_heroes(unique_heroes):
+    for hero in unique_heroes.values():
+        hero_id = hero["ids"][0]
+        hero_data = heroes_data[hero_id]
+
+        hero["localized_name"] = hero_data["localized_name"]
+
+        add_data(hero, hero_data)
+
+
+def enrich_skills(unique_skills):
+    for skill in unique_skills.values():
+        skill_data = skills_data[skill["name"]]
+
+        add_data(skill, skill_data)
