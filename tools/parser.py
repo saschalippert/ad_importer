@@ -36,7 +36,7 @@ def parse_abilities(ability_file):
 
     ability_d = _construct_json(blocks)
 
-    with open("../abilities_parsed.json", 'w') as f:
+    with open("abilities_parsed.json", 'w') as f:
         json.dump(ability_d, f)
         print("Parsed Abilities.")
 
@@ -51,7 +51,7 @@ def parse_heroes(hero_file='../npc_heroes.txt'):
 
     hero_d = _construct_json(hero_blocks)
 
-    with open("../heroes_parsed.json", 'w') as f:
+    with open("heroes_parsed.json", 'w') as f:
         json.dump(hero_d, f)
         print("Parsed Heros.")
 
@@ -59,7 +59,7 @@ def parse_heroes(hero_file='../npc_heroes.txt'):
 def _construct_json(blocks):
     d = {}
     for block in blocks:
-        d[block[0][1]] = dict(block[1:])
+        d[block[0][1].lower()] = {k.lower(): v for k, v in block[1:]}
 
     return d
 
@@ -112,4 +112,4 @@ def get_block(f, line, kind):
     return results
 
 
-parse_abilities('data//npc_abilities.json')
+parse_abilities('data/npc_abilities.txt')

@@ -75,7 +75,7 @@ def main():
     database.drop()
 
     matches = sql_dict.values()
-    # matches = itertools.islice(matches, 100)
+    matches = [m for m in matches]
 
     print("analysing skills and heroes")
 
@@ -100,9 +100,6 @@ def main():
         prime_lookup[skill["name"]] = skill["prime"]
 
     print("analysing matches")
-
-    matches = sql_dict.values()
-    # matches = itertools.islice(matches, 100)
 
     combos = {}
 

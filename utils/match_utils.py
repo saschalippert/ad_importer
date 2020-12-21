@@ -9,14 +9,28 @@ map_skills = {
     "tiny_toss_tree": skill_names["tiny_tree_grab"],
     "dark_willow_bedlam": skill_names["dark_willow_terrorize"],
     "wisp_spirits_in": skill_names["wisp_spirits"],
+    'wisp_spirits_out': skill_names["wisp_spirits"],
     'life_stealer_consume': skill_names['life_stealer_infest'],
-    'keeper_of_the_light_spirit_form_illuminate': skill_names['keeper_of_the_light_illuminate'],
+    "life_stealer_assimilate": skill_names['life_stealer_infest'],
     'phoenix_launch_fire_spirit': skill_names['phoenix_fire_spirits'],
     'alchemist_unstable_concoction_throw': skill_names['alchemist_unstable_concoction'],
     'kunkka_return': skill_names['kunkka_x_marks_the_spot'],
     'monkey_king_primal_spring': skill_names['monkey_king_tree_dance'],
     "bane_nightmare_end": skill_names['bane_nightmare'],
+    "faceless_void_time_walk_reverse": skill_names["faceless_void_time_walk"],
+    'nevermore_shadowraze2': skill_names["nevermore_shadowraze1"],
+    'nevermore_shadowraze3': skill_names["nevermore_shadowraze1"],
+    'keeper_of_the_light_radiant_bind': skill_names["keeper_of_the_light_mana_leak"],
+    'keeper_of_the_light_spirit_form_illuminate': skill_names['keeper_of_the_light_illuminate'],
+    "ogre_magi_multicast": None
 }
+
+for name, skill in skills_data.items():
+    if "abilitydraftultshardability" in skill:
+        map_skills[skill["abilitydraftultshardability"]] = skill["id"]
+
+    if "abilitydraftultscepterability" in skill:
+        map_skills[skill["abilitydraftultscepterability"]] = skill["id"]
 
 
 def __filter_skills(skill, skill_filters):
@@ -33,7 +47,12 @@ def get_skill_name(skill_id):
         skill_name = skill_ids[str_skill]
 
         if skill_name in map_skills:
-            skill_name = skill_ids[map_skills[skill_name]]
+            mapped_skill_name = map_skills[skill_name]
+
+            if mapped_skill_name:
+                skill_name = skill_ids[mapped_skill_name]
+            else:
+                skill_name = None
 
         return skill_name
 
@@ -241,5 +260,10 @@ def enrich_heroes(unique_heroes):
 def enrich_skills(unique_skills):
     for skill in unique_skills.values():
         skill_data = skills_data[skill["name"]]
+
+        skill["has_scepter_upgrade"] = "hasscepterupgrade" in skill_data
+        skill["has_shard_upgrade"] = "hasshardupgrade" in skill_data
+        skill["has_shard_skill"] = "abilitydraftultshardability" in skill_data
+        skill["has_special_bonus"] = "linkedspecialbonus" in skill_data
 
         add_data(skill, skill_data)
